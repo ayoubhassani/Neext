@@ -12,6 +12,7 @@ $collection = (new MongoHelper ())->getCollection ( "NextDb", "products" );
 $response = [ ];
 switch ($method) {
 	case 'GET' :
+		if($request==null){
 		// retreve and return all documents
 		// Design initial table header
 		$data = '<table class="table table-bordered table-striped">
@@ -23,7 +24,7 @@ switch ($method) {
 							<th>Update</th>
 							<th>Delete</th>
 						</tr>';
-		$cursor = $collection->find ( [ ] );
+		$cursor = $collection->find ( [] );
 		foreach ( $cursor as $document ) {
 			$id = $document ['_id'];
 			$data .= '<tr>
@@ -42,6 +43,9 @@ switch ($method) {
 		$data .= '</table>';
 		
 		echo $data;
+		}else {
+			//lecture d'un selee enregistrement
+		}
 		break;
 	case 'PUT' :
 		// update a document
@@ -58,6 +62,8 @@ switch ($method) {
 		break;
 	case 'DELETE' :
 		// delete a document
-		// $sql = "delete `$table` where id=$key";
+		$deleteResult = $collection->deleteOne(['_id' => new MongoDB\BSON\ObjectID($request[0])]);
+
+		printf("Deleted %d document(s)\n", $deleteResult->getDeletedCount());
 		break;
 }

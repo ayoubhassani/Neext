@@ -4,7 +4,7 @@ function addRecord() {
     var first_name = $("#first_name").val();
     var last_name = $("#last_name").val();
     var email = $("#email").val();
-
+var data = [first_name,last_name,email];
     // Add record
     $.post("api/controller.php", {
         first_name: first_name,
@@ -35,7 +35,7 @@ function readRecords() {
 function DeleteUser(id) {
     var conf = confirm("Are you sure, do you really want to delete User?");
     if (conf == true) {
-        $.post("ajax/deleteUser.php", {
+        $.delete("ajax/deleteUser.php", {
                 id: id
             },
             function (data, status) {
