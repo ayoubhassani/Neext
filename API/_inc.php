@@ -46,10 +46,11 @@ function includeFile($fileName) {
 	include $fileName;
 }
 
-readDirectory ( "./MongoDB" );
+readDirectory ( "../libs/MongoDB" );
 class MongoHelper {
 	function getClient() {
-		return new MongoDB\Client ( "mongodb://localhost:27017" );
+		$mongoUrl = "mongodb://localhost:27017";
+		return new MongoDB\Client ( $mongoUrl );
 	}
 	function getCollection($dbName,$collectionName){
 		return $this->getClient()->$dbName->$collectionName;
