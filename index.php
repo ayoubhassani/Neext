@@ -1,3 +1,8 @@
+<?php 
+// print_r($_SERVER);
+// exit();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

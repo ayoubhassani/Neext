@@ -49,15 +49,15 @@ function DeleteUser(id) {
 function GetUserDetails(id) {
     // Add User ID to the hidden field for furture usage
     $("#hidden_user_id").val(id);
-    $.post("ajax/readUserDetails.php", {
-            id: id
+    $.get("API/controller.php/"+id, {
         },
         function (data, status) {
+//        	alert(data);
             // PARSE json data
             var user = JSON.parse(data);
             // Assing existing values to the modal popup fields
-            $("#update_first_name").val(user.first_name);
-            $("#update_last_name").val(user.last_name);
+            $("#update_first_name").val(user.name);
+            $("#update_last_name").val(user.username);
             $("#update_email").val(user.email);
         }
     );
@@ -75,19 +75,24 @@ function UpdateUserDetails() {
     var id = $("#hidden_user_id").val();
 
     // Update the details by requesting to the server using ajax
-    $.post("ajax/updateUserDetails.php", {
-            id: id,
-            first_name: first_name,
-            last_name: last_name,
-            email: email
-        },
-        function (data, status) {
-            // hide modal popup
-            $("#update_user_modal").modal("hide");
+    $.ajax({
+        url: 'API/controller.php/'+id,
+        type: 'PUT',
+        dataType: 'json',
+        contentType: 'application/json',
+        data:JSON.stringify( {
+            'first_name': first_name,
+            'last_name': last_name,
+            'email': email
+        }),
+        success: function(result) {
+            // Do something with the result
+        	$("#update_user_modal").modal("hide");
             // reload Users by using readRecords();
             readRecords();
         }
-    );
+    });
+    
 }
 
 $(document).ready(function () {

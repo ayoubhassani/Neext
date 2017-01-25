@@ -12,10 +12,10 @@ $collection = (new MongoHelper ())->getCollection ( "NextDb", "products" );
 $response = [ ];
 switch ($method) {
 	case 'GET' :
-		if($request==null){
-		// retreve and return all documents
-		// Design initial table header
-		$data = '<table class="table table-bordered table-striped">
+		if ($request == null) {
+			// retreve and return all documents
+			// Design initial table header
+			$data = '<table class="table table-bordered table-striped">
 						<tr>
 							<th>Id</th>
 							<th>First Name</th>
@@ -24,10 +24,10 @@ switch ($method) {
 							<th>Update</th>
 							<th>Delete</th>
 						</tr>';
-		$cursor = $collection->find ( [] );
-		foreach ( $cursor as $document ) {
-			$id = $document ['_id'];
-			$data .= '<tr>
+			$cursor = $collection->find ( [ ] );
+			foreach ( $cursor as $document ) {
+				$id = $document ['_id'];
+				$data .= '<tr>
 				<td>' . $id . '</td>
 				<td>' . $document ['username'] . '</td>
 				<td>' . $document ['name'] . '</td>
@@ -39,17 +39,47 @@ switch ($method) {
 					<button onclick="DeleteUser(\'' . $id . '\');" class="btn btn-danger">Supprimer</button>
 				</td>
     		</tr>';
-		}
-		$data .= '</table>';
-		
-		echo $data;
-		}else {
-			//lecture d'un selee enregistrement
+			}
+			$data .= '</table>';
+			
+			echo $data;
+		} else {
+			// lecture d'un selee enregistrement
+			$cursor = $collection->find ( [ 
+					'_id' => new MongoDB\BSON\ObjectID ( $request [0] ) 
+			] );
+			foreach ( $cursor as $document ) {
+				echo json_encode ( $document );
+				break;
+			}
 		}
 		break;
 	case 'PUT' :
-		// update a document
+		$id = $request [0];
+		
+		// print_r($input);
+		
+		// exit;
+		// $firstname=$_REQUEST['first_name'];
+		// $name=$_REQUEST['last_name'];
+		// $email=$_REQUEST['email'];
+		$update = $collection->updateOne ( [ 
+				"_id" => new MongoDB\BSON\ObjectID ( $id ) 
+		], [ 
+				'$set' => [ 
+						'username' => $input ["first_name"],
+						'name' => $input ["last_name"],
+						'email' => $input ["email"] 
+				] 
+		] );
+		// update a document['username'=>$firstname,'name'=>$name, 'email'=>$email]
 		// $sql = "update `$table` set $set where id=$key";
+		$result = [ ];
+		$result ['success'] = true;
+		$result ['message'] = "Matched " . $update->getMatchedCount () . " document(s)   Modified " . $update->getModifiedCount () . " document(s)";
+		// printf("Matched %d document(s)\n", $update->getMatchedCount());
+		// printf("Modified %d document(s)\n", $update->getModifiedCount());
+		echo json_encode ( $result );
 		break;
 	case 'POST' :
 		// insert a document
@@ -62,8 +92,10 @@ switch ($method) {
 		break;
 	case 'DELETE' :
 		// delete a document
-		$deleteResult = $collection->deleteOne(['_id' => new MongoDB\BSON\ObjectID($request[0])]);
-
-		printf("Deleted %d document(s)\n", $deleteResult->getDeletedCount());
+		$deleteResult = $collection->deleteOne ( [ 
+				'_id' => new MongoDB\BSON\ObjectID ( $request [0] ) 
+		] );
+		
+		printf ( "Deleted %d document(s)\n", $deleteResult->getDeletedCount () );
 		break;
 }
