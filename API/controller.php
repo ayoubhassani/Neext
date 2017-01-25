@@ -77,25 +77,30 @@ switch ($method) {
 		$result = [ ];
 		$result ['success'] = true;
 		$result ['message'] = "Matched " . $update->getMatchedCount () . " document(s)   Modified " . $update->getModifiedCount () . " document(s)";
-		// printf("Matched %d document(s)\n", $update->getMatchedCount());
-		// printf("Modified %d document(s)\n", $update->getModifiedCount());
 		echo json_encode ( $result );
 		break;
 	case 'POST' :
 		// insert a document
-		$insertOneResult = $collection->insertOne ( print_r ( $inputData, true ) );
+		$insertOneResult = $collection->insertOne ( [ 
+						'username' => $input ["first_name"],
+						'name' => $input ["last_name"],
+						'email' => $input ["email"] 
+				]  );
 		
-		echo $insertOneResult->getInsertedCount () . " document(s) Inserted \n";
-		
-		var_dump ( $insertOneResult->getInsertedId () );
-		// $sql = "insert into `$table` set $set";
+// 		echo $insertOneResult->getInsertedCount () . " document(s) Inserted \n";
+		$result = [ ];
+		$result ['success'] = true;
+		$result ['message'] = $insertOneResult->getInsertedCount () . " document(s) Inserted \n";
+		echo json_encode ( $result );
 		break;
 	case 'DELETE' :
 		// delete a document
 		$deleteResult = $collection->deleteOne ( [ 
 				'_id' => new MongoDB\BSON\ObjectID ( $request [0] ) 
 		] );
-		
-		printf ( "Deleted %d document(s)\n", $deleteResult->getDeletedCount () );
+		$result = [ ];
+		$result ['success'] = true;
+		$result ['message'] = "Deleted ".$deleteResult->getDeletedCount ()." document(s)\n";
+		echo json_encode ( $result );
 		break;
 }
